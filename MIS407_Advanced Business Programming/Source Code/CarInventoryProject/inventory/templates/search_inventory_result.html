@@ -1,0 +1,43 @@
+<!--
+# ----------------------------------------------------------------------------
+# Subject: MIS407
+# Group  : 3
+# Author : Yen Vo
+# Date   : 04/25/2022
+# version: 1.0
+# ---------------------------------------------------------------------------
+""" Define search result inventory UI template """
+# ---------------------------------------------------------------------------
+# Changes
+# 04/25/2022  Yen Vo - Created search result inventory UI template
+#
+# ---------------------------------------------------------------------------
+-->
+
+{% extends "isu_base.html" %}
+{% load static %}
+
+{% block page_content %}
+
+<div class="col-md-8 offset-md-2">
+    {% if query %}
+    <h2>
+        {% with results.count as total_results %}
+        Found {{ total_results }} result{{ total_results|pluralize }}
+        {% endwith %}
+    </h2>
+    {% for v in results %}
+    <a href="{{v.get_url}}"><h3>{{v.model_name}}</h3></a>
+    <p class="lead">Model-year: {{v.model_year}} </p>
+    <p class="lead">Title status: {{v.title_status}} </p>
+    <p class="lead">Price: ${{v.price}} </p>
+    {% empty %}
+    <h3>No results found.</h3>
+    {% endfor %}
+    {% endif %}
+    <form action="{% url 'search_inventory' %}" class="form-inline" method="GET">
+        <button type="submit" class="btn btn-primary btn-lg mb-2">Back</button>
+    </form>
+</div>
+</div>
+{% endblock %}

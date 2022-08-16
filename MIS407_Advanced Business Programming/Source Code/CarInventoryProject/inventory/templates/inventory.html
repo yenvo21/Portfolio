@@ -1,0 +1,60 @@
+<!--
+# ----------------------------------------------------------------------------
+# Subject: MIS407
+# Group  : 3
+# Author : Yen Vo
+# Date   : 04/25/2022
+# version: 1.0
+# ---------------------------------------------------------------------------
+""" Define inventory UI template """
+# ---------------------------------------------------------------------------
+# Changes
+# 04/25/2022  Yen Vo             - Created inventory UI template
+#
+# ---------------------------------------------------------------------------
+-->
+
+{% extends "isu_base.html" %}
+{% load static %}
+
+{% block page_content %}
+
+<h2>Inventory</h2>
+<br/>
+<button type="button" class="btn btn-success btn-lg mb-2" onclick="location.href='/inventory/add'">Add Vehicle</button>
+
+<table border="1">
+    <tr>
+        <th>Brand Name</th>
+        <th>Country</th>
+        <th>Model</th>
+        <th>Year</th>
+        <th>Title Status</th>
+        <th>VIN#</th>
+        <th>Mileage</th>
+        <th>Engine</th>
+        <th>Color</th>
+        <th>Price</th>
+        <th>Status</th>
+        <th>Action</th>
+    </tr>
+{% for v in vehicles %}
+    <tr>
+        <td>{{ v.brand.brand_name }}</td>
+        <td>{{ v.brand.country }}</td>
+        <td>{{ v.model_name }}</td>
+        <td>{{ v.model_year }}</td>
+        <td>{{ v.title_status }}</td>
+        <td>{{ v.vin_number }}</td>
+        <td>{{ v.mileage }}</td>
+        <td>{{ v.engine }}</td>
+        <td>{{ v.color }}</td>
+        <td>{{ v.price }}</td>
+        <td>{{ v.status }}</td>
+        <td><a href="/inventory/edit/{{ v.id }}">Edit</a>&nbsp;/
+            <a href="/inventory/delete/{{ v.id }}">Delete</a></td>
+    </tr>
+{% endfor %}
+</table>
+
+{% endblock %}

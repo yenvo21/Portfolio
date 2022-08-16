@@ -1,0 +1,150 @@
+<!--
+# ----------------------------------------------------------------------------
+# Subject: MIS407
+# Group  : 3
+# Author : Yen Vo
+# Date   : 04/25/2022
+# version: 1.0
+# ---------------------------------------------------------------------------
+""" Define base template for all Inventory UI"""
+# ---------------------------------------------------------------------------
+# Changes
+# 04/25/2022  Yen Vo - Created base template and common navigation menu for Inventory system
+#
+# ---------------------------------------------------------------------------
+-->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- Reuse ISU CSS and template -->
+    <title>Iowa State University - MIS407 - Team 3</title>
+    <link href="https://cdn.theme.iastate.edu/nimbus-sans/css/nimbus-sans.css" rel="stylesheet">
+    <link href="https://cdn.theme.iastate.edu/merriweather/css/merriweather.css" rel="stylesheet">
+    <link href="https://www.iastate.edu/modules/iastate-theme/css/iastate.min.css?v=2.0.14" rel="stylesheet">
+    <link href="https://cdn.theme.iastate.edu/favicon/favicon.ico" rel="icon" type="image/x-icon">
+    <link href="https://cdn.theme.iastate.edu/favicon/favicon.png" rel="icon" type="">
+    <link href="https://cdn.theme.iastate.edu/favicon/apple-touch-icon.png" rel="icon">
+    <link href="https://www.iastate.edu/modules/app/css/iastate2017.css?7" media="all" rel="stylesheet">
+    <link href="https://www.iastate.edu/modules/app/css/home-v3.css?7" media="all" rel="stylesheet">
+    <link href="https://www.iastate.edu/modules/app/css/dark-v3.css?7" media="all" rel="stylesheet">
+
+    <script src="https://cdn.theme.iastate.edu/fontawesome/5.0/js/fontawesome-all.min.js"></script>
+</head>
+<body>
+<!-- header -->
+<header>
+
+    <!-- Top navbar -->
+    <nav class="navbar-iastate">
+        <div class="container">
+            <!-- navbar-right -->
+            <ul class="nav navbar-nav navbar-right navbar-iastate-right">
+                <li>
+                    {% if user.is_authenticated %}
+                    <a href="/admin/logout" class="">Sign Out</a>
+                    {% else %}
+                    <a href="/admin/login" class="">Sign In</a>
+                    {% endif %}
+                </li>
+            </ul>
+            <!-- /navbar-right -->
+        </div>
+    </nav>
+    <!-- /navbar -->
+
+    <!-- navbar-site -->
+    <nav class="navbar-site">
+        <div class="container">
+            <div class="navbar-site-wordmark">
+                <span><h2>Car Inventory System</h2></span>
+            </div>
+        </div>
+    </nav>
+    <!-- /navbar-site -->
+
+</header>
+<!-- /header -->
+
+<!-- navs -->
+<div id="navs">
+
+    <!-- navbar-menu -->
+    <div class="navbar-menu-wrapper">
+        <nav class="navbar navbar-menu navbar-default navbar-static-top no-border navbar-caps navbar-menu-affix"
+             role="navigation">
+            <div class="container">
+                <div class="collapse navbar-collapse" id="navbar-menu-collapse">
+                    <ul class="nav navbar-nav">
+                        <li>
+                            <a class="target-offset" href="/home" tabindex="0">
+                                <span class="label-text">Home</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a class="target-offset" href="/inventory" tabindex="0">
+                                <span class="label-text">Inventory</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a class="target-offset" href="/inventory/brand" tabindex="0">
+                                <span class="label-text">Brand</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a class="target-offset" href="/search" tabindex="0">
+                                <span class="label-text">Search</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a class="target-offset" href="/admin" tabindex="0">
+                                <span class="label-text">Admin</span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </div>
+    <!-- /navbar-menu -->
+
+</div>
+<!-- /navs -->
+
+<!-- post-nav -->
+<div id="post-nav">
+
+</div>
+<!-- /post-nav -->
+
+<div class="container">
+    {% block page_content %}
+    {% endblock %}
+</div>
+
+<!-- footer -->
+<footer role="contentinfo">
+    <div class="container">
+        <div class="row" style="background-color:#e7e7e7;">
+            <!-- footer-associates -->
+            <section class="footer-associates col-sm-12 col-md-3">&nbsp;</section>
+            <section class="footer-contact col-sm-12 col-md-3">
+                <ul>
+                    <li>MIS407</li>
+                </ul>
+            </section>
+        </div>
+    </div>
+</footer>
+<!-- /footer -->
+
+<script src="https://code.jquery.com/jquery-1.11.3.min.js"></script>
+<script src="https://www.iastate.edu/modules/iastate-theme/js/vendor/bootstrap.min.js"></script>
+<script src="https://www.iastate.edu/modules/iastate-theme/js/vendor/bootstrap-submenu.min.js"></script>
+<script src="https://www.iastate.edu/modules/iastate-theme/js/iastate.js"></script>
+<script src="https://www.iastate.edu/modules/app/js/cookie.umd.min.js?5"></script>
+<script src="https://www.iastate.edu/modules/app/js/home-v3.js?5"></script>
+<script type="text/javascript">
+
+</script>
+</body>
+</html>

@@ -1,0 +1,29 @@
+<!--
+# ----------------------------------------------------------------------------
+# Subject: MIS407
+# Group  : 3
+# Author : Yen Vo
+# Date   : 04/25/2022
+# version: 1.0
+# ---------------------------------------------------------------------------
+""" Define brand UI template """
+# ---------------------------------------------------------------------------
+# Changes
+# 04/25/2022  Yen Vo - Created brand UI template
+#
+# ---------------------------------------------------------------------------
+-->
+
+{% extends "isu_base.html" %}
+{% load static %}
+
+{% block page_content %}
+
+<br/><br/>
+<form action = "/inventory/brand" method = "POST">
+    {% csrf_token %}
+    {{form }}
+    <input type="submit" value="Submit">
+</form>
+
+{% endblock %}

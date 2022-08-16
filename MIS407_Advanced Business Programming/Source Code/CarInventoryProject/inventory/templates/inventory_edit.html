@@ -1,0 +1,32 @@
+<!--
+# ----------------------------------------------------------------------------
+# Subject: MIS407
+# Group  : 3
+# Author : Yen Vo
+# Date   : 05/04/2022
+# version: 1.0
+# ---------------------------------------------------------------------------
+""" Define edit inventory UI template """
+# ---------------------------------------------------------------------------
+# Changes
+# 05/04/2022  Yen Vo - Created edit inventory UI template
+#
+# ---------------------------------------------------------------------------
+-->
+
+{% extends "isu_base.html" %}
+{% load static %}
+
+{% block page_content %}
+<h4>Edit Inventory</h4>
+
+<form action="/inventory/update/{{ model_id }}" method="POST">
+{% csrf_token %}
+    <table>
+        {{ form.as_table }}
+    </table>
+    <input class="btn btn-success btn-lg mb-2" type="submit" value="Save">
+
+</form>
+
+{% endblock %}

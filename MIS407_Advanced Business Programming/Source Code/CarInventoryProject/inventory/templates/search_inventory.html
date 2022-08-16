@@ -1,0 +1,45 @@
+<!--
+# ----------------------------------------------------------------------------
+# Subject: MIS407
+# Group  : 3
+# Author : Yen Vo
+# Date   : 04/25/2022
+# version: 1.0
+# ---------------------------------------------------------------------------
+""" Define search inventory UI template """
+# ---------------------------------------------------------------------------
+# Changes
+# 04/25/2022  Yen Vo - Created search inventory UI template
+#
+# ---------------------------------------------------------------------------
+-->
+
+{% extends "isu_base.html" %}
+{% load static %}
+
+{% block page_content %}
+
+<div>
+    <br/>
+    <form action="{% url 'search_inventory' %}" class="form-inline" method="POST">
+        {% csrf_token %}
+        <div class="form-group mb-8">
+            <h1>{% if vehicle %}{{ vehicle.model_name }}{% else %} List of Vehicles {% endif %}</h1>
+        </div>
+        <div class="form-group mx-sm-3 mb-2">
+            <label for="" class="sr-only">search</label>
+            <input name="search" type="" class="form-control" id="" placeholder="Keyword">
+        </div>
+        <button type="submit" class="btn btn-success btn-lg mb-2">Search</button>
+    </form>
+    <br/>
+
+    {% for x in vehicle %}
+    <h3><a href="{{ x.get_url }}">{{x.model_name}}</a></h3>
+    <p class="lead">Model year: {{x.model_year}}</p>
+    <p class="lead">Title status: {{x.title_status}}</p>
+    <p class="lead">Price: ${{x.price}}</p>
+    <hr>
+    {% endfor %}
+</div>
+{% endblock %}
