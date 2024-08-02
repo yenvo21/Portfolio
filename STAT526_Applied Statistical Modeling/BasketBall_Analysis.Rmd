@@ -1,0 +1,242 @@
+---
+title: "Project Group 2"
+author: "Group 2 - Lavonte Davis, Gopal Nandigama, Yen Vo, Chris Sievers"
+date: "2023-10-04"
+output: word_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+```{r}
+setwd("C:/Users/yenvok/Box/STAT526/Project")
+getwd()
+df=  read.csv("cbb23_v2.csv", header = TRUE)
+#df$WinPercentage <- df$W/df$G
+head(df)
+```
+```{r}
+#Correlation Matrix
+cor(df[sapply(df,is.numeric)]) 
+# Highly correlate with W =  WAB,ADJOE,BARTHAG, EFG_D,X2P_D 
+
+```
+```{r}
+#CONF: The Athletic Conference in which the school participates in (A10 = Atlantic 10, ACC = Atlantic Coast Conference, AE = America East, Amer = American, ASun = ASUN, B10 = Big Ten, B12 = Big 12, BE = Big East, BSky = Big Sky, BSth = Big South, BW = Big West, CAA = Colonial Athletic Association, CUSA = Conference USA, Horz = Horizon League, Ivy = Ivy League, MAAC = Metro Atlantic Athletic Conference, MAC = Mid-American Conference, MEAC = Mid-Eastern Athletic Conference, MVC = Missouri Valley Conference, MWC = Mountain West, NEC = Northeast Conference, OVC = Ohio Valley Conference, P12 = Pac-12, Pat = Patriot League, SB = Sun Belt, SC = Southern Conference, SEC = South Eastern Conference, Slnd = Southland Conference, Sum = Summit League, SWAC = Southwestern Athletic Conference, WAC = Western Athletic Conference, WCC = West Coast Conference)
+
+library(ggplot2)
+ggplot(df, aes(ADJOE, W, color = CONF))+
+  geom_point()+
+  ggtitle("# Game Won by Adjusted Offensive Efficiency and School Zone ")+
+  labs(y="# Game Won", x="Adjusted Offensive Efficiency")
+```
+```{r}
+ggplot(df, aes( X2P_O , W, color = CONF))+
+  geom_point()+
+  ggtitle("# Game Won by Two-Point Shooting % Allowed and School Zone")+
+  labs(y="# Game Won", x="Two-Point Shooting %  Allowed")
+```
+```{r}
+boxplot( W~CONF, data = df,
+        main = "Number of Games Won By School Zone ",
+        xlab = "Name of School Zone",
+        ylab = "Number of Games Won",
+        legend.position="left")
+ 
+```
+```{r}
+ggplot(df, aes(x=CONF, y=W, fill=CONF)) + 
+    geom_boxplot(alpha=0.3) +
+    theme(legend.position="left")
+```
+```{r}
+#Fit a model with high correlation variables based on r correlation for only numeric variables
+# We got a pretty good model with low RMSE.
+#ADJDE, 2P_O, 2P_D,3P_O,3P_D
+# BARTHAG and WAB are highly correlative, should be consider remove one of them in our final model
+model1<-lm(W~WAB+ADJOE+BARTHAG+ EFG_D+X2P_D+EFG_O + EFG_D, data = df)
+summary(model1)
+```
+```{r}
+vif(model1)
+```
+```{r}
+AIC(model1)
+```
+
+
+```{r}
+# Added more models based on team member's suggestion
+#Potential variables are  ADJDE, X2P_O, X2P_D,3P_O,3P_D, those variables are r number >0.4
+# R squared is slight improved and well as RMSE
+
+model2<-lm(W~WAB+ADJOE+BARTHAG+ EFG_D+X2P_D+ADJDE+ X2P_O+ X3P_O+ X3P_D+EFG_O+EFG_D , data = df)
+summary(model2)
+```
+```{r}
+# Problem, all variables  has VIF> 10, a sign of multicolinearity
+# We will apply different strategy to find the best model
+library(car)
+library(MASS)
+vif(model2)
+```
+```{r}
+#AIC
+AIC(model2)
+```
+
+
+```{r}
+# There are several categorical variables need to convert to factor to include in full model
+# for model selection
+summary(df)
+```
+```{r}
+
+#df$TEAM <-as.factor(df$TEAM)
+#df$CONF <-as.factor(df$CONF)
+
+# 
+# Since Seed and postseason is not a meaning variable to convert( i already tried to convert these #variables, but it didn't work out to run stepwise and forward selection, same problem for TEAM ), we #will eliminate these variables from  our analysis. 
+#df$POSTSEASON <as.factor(df$POSTSEASON)
+#df$SEED <as.factor(df$SEED)
+#summary(df)
+```
+
+
+```{r}
+# Full Model
+modelFull<- lm(W~G+ADJOE+ADJDE+BARTHAG+EFG_O+EFG_D+TOR+TORD+ORB+ DRB+FTR+
+                  FTRD +X2P_O+X2P_D+X3P_O+X3P_D+ADJ_T+WAB   ,
+                      data=df)
+  summary(modelFull)
+##Simple Model  
+modelSimple<-lm(W~1,data=df)
+
+#Stepwise AIC, forward selection
+stepAICfor<-stepAIC(modelSimple,
+                    scope=list(upper=modelFull,
+                               lower=modelSimple),
+                    direction="forward")
+stepAICfor$anova
+summary(stepAICfor)
+vif(stepAICfor)
+AIC(stepAICfor)
+
+
+```
+```{r}
+#Stepwise AIC, backward selection
+stepAICback<-stepAIC(modelFull,
+                     scope=list(upper=modelFull,
+                                lower=modelSimple),
+                     direction="backward")
+stepAICback$anova
+summary(stepAICback)
+vif(stepAICback)
+AIC(stepAICback)
+```
+```{r}
+# final model
+# ADJOE,ADJDE,WAB, based on our correlation table, WAB,ADJOE,ADJDE are highly correlated
+# we should remove the three variables from our final model from our final model
+# If we remove WAB,ADJOE,ADJDE , the AIC is higher than previous model, this is not a best model. We 
+# will add WAB,ADJOE,ADJDE back to our final model, this is our final model.
+finalmodel<-lm( W ~ G  + EFG_O + EFG_D + TOR + TORD + 
+    ORB + DRB + FTR + X2P_O+WAB+ADJOE+ADJDE  , data = df)
+summary(finalmodel)
+vif(finalmodel)
+AIC(finalmodel)
+```
+
+
+
+```{r}
+# Residual Plot and QQ Plot to check for  the 4 assumptions
+
+predicted <- finalmodel$fitted.values
+residuals <- finalmodel$residuals
+df2 <- cbind(df, predicted, residuals)
+
+# Residuals Plot checking Form of the model , Variance Assumption
+library(ggplot2)
+ggplot(df2,aes(x = predicted, y = residuals))+
+  geom_point()+
+  labs(title = 
+         "Residual Plot")+
+  ylab("Residuals")+
+  xlab("Predicted ")+
+  geom_abline(slope = 0, intercept = 0)
+```
+```{r}
+# QQ Plot
+# The plot is looking good, no violation over Normality assumption
+qqnorm(residuals, ylab = "Residuals", pch = 19, cex = 0.5)
+qqline(residuals)
+```
+```{r}
+#Histogram of Win
+Win_Number <- df$W
+hist(Win_Number)
+```
+```{r}
+# Detect Outliers
+finalmodel.sum<-summary(finalmodel)
+out_anova <- anova(finalmodel)
+n <- sum(out_anova$Df)+1
+p <- length(finalmodel$coefficients)-1
+
+RMSE <- finalmodel.sum$sigma
+outlier <- (abs(summary(finalmodel)$residuals/RMSE))>3
+#Identify outliers 
+df$outlier <- factor(outlier)
+df$predicted <- predict(finalmodel)
+df$standardized_residual <- summary(finalmodel)$residuals/RMSE
+
+### Scatterplot of Standardized Residuals
+ggplot(df,aes(y = standardized_residual, x = predicted))+
+  geom_point(aes(col = outlier))+
+  ylim(-4,4)+
+  geom_abline(intercept = -3, slope = 0,lty = 2)+
+  geom_abline(intercept = 3, slope = 0,lty = 2)+
+geom_abline(intercept = 0, slope = 0)
+```
+```{r}
+#
+### Investigate Points with High Leverage
+## Point with high leverage
+# Around 91 observations with high leverage level
+
+out_anova <- anova(finalmodel)
+n <- sum(out_anova$Df)+1
+p <- length(finalmodel$coefficients)-1
+hatvals<- hatvalues(finalmodel)
+df$hatvals <- hatvals
+large_hatval <- hatvals>2*(p+1)/n
+df$large_hatval <- factor(hatvals>2*(p+1)/n)
+
+
+ggplot(df, aes(x = 1:n, y = hatvals))+
+geom_point(aes(col = large_hatval))+
+ylab("Hat Values")+ ## label on y axis
+xlab("Index")+ ## label on x axis
+  geom_abline(intercept = 2*(p+1)/n, slope = 0,lty = 2)
+ 
+```
+```{r}
+# Point with high leverage
+# Around 91 observations with high leverage level
+w_hat <- df[large_hatval,] 
+ggplot(df, aes(y = standardized_residual, x = hatvals))+
+  geom_point(aes())+
+  geom_point(data = w_hat,color = "red")+
+  ylab("Standardized Residuals")+ ## label on y axis
+  xlab("Leverage")+ ## label on x axis
+  geom_hline(yintercept = 3,lty = 2,col = 2,linewidth = 1.52)+
+    geom_vline(xintercept = 2*(p+1)/n,lty = 5,col = 4,
+               linewidth = 1.52)
+
+```
+
